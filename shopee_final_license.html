@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Eksklusif Shopee - promo.my.id</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #0b0b0e;
+            color: #f3f4f6;
+            padding-bottom: 50px;
+            line-height: 1.5;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header dikecilkan agar proporsional dan elegan */
+        header {
+            background: linear-gradient(135deg, #ff5500, #ff8800, #1a1a1a);
+            background-size: 200% 200%;
+            animation: gradientShift 6s ease infinite;
+            color: white;
+            padding: 16px 15px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(255, 85, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Efek Teks 3D CSS Murni dengan ukuran yang lebih proporsional */
+        .logo-3d-wrapper {
+            perspective: 1000px;
+            margin: 4px auto 6px auto;
+            display: inline-block;
+        }
+        .text-3d {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            color: #ffffff;
+            transform-style: preserve-3d;
+            animation: float3D 3s ease-in-out infinite;
+            text-shadow: 
+                0 1px 0 #cccccc,
+                0 2px 0 #999999,
+                0 3px 1px rgba(0,0,0,0.3),
+                0 2px 10px rgba(255, 85, 0, 0.5);
+        }
+        .text-3d .colored-my {
+            color: #ffaa00;
+            text-shadow: 
+                0 1px 0 #cc8800,
+                0 2px 0 #b37700,
+                0 3px 1px rgba(0,0,0,0.3),
+                0 2px 10px rgba(255, 170, 0, 0.7);
+        }
+
+        @keyframes float3D {
+            0%, 100% {
+                transform: translateY(0px) rotateX(3deg) rotateY(-3deg);
+            }
+            50% {
+                transform: translateY(-4px) rotateX(-3deg) rotateY(3deg);
+            }
+        }
+
+        header p {
+            font-size: 11px;
+            opacity: 0.95;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            margin-top: 2px;
+        }
+
+        /* Container utama responsif penuh */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #ff5500;
+            padding-left: 8px;
+        }
+
+        /* Grid Produk Khusus Shopee (Responsif Fleksibel) */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        /* Kartu Produk */
+        .card {
+            background: #141418;
+            border: 1px solid #22222b;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(255, 85, 0, 0.25);
+            border-color: #ff5500;
+        }
+        .card-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: #1a1a22;
+        }
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .card:hover img {
+            transform: scale(1.05);
+        }
+        .badge-shopee {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: #ff5500;
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+        .card-body {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+        .title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 34px;
+        }
+        .price-row {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .price {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ff6600;
+        }
+        .btn-shopee {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(135deg, #ff5500, #ff7700);
+            color: white;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 8px 0;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(255, 85, 0, 0.3);
+            transition: all 0.25s ease;
+        }
+        .btn-shopee:hover {
+            background: linear-gradient(135deg, #ff6600, #ff9933);
+            box-shadow: 0 5px 15px rgba(255, 85, 0, 0.5);
+        }
+
+        /* Kotak Widget Statistik Pengunjung & Total Klik Produk (Di Bawah) */
+        .visitor-box {
+            background: #141418;
+            padding: 14px 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-top: 30px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+            border: 1px solid #26262e;
+        }
+        .visitor-item {
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 1px solid #26262e;
+            padding-left: 10px;
+        }
+        .visitor-item:first-child {
+            border-left: none;
+            padding-left: 0;
+        }
+        .visitor-item strong {
+            display: block;
+            font-size: 15px;
+            color: #ff6600;
+            margin-top: 3px;
+        }
+
+        /* Kotak Lisensi & Disclaimer Afiliasi di Paling Bawah */
+        .affiliate-license-box {
+            background: #121216;
+            border: 1px solid #26262e;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 11px;
+            color: #9ca3af;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .affiliate-license-box strong {
+            color: #e5e7eb;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header dengan Teks 3D Animasi Mengambang -->
+    <header>
+        <div class="logo-3d-wrapper">
+            <div class="text-3d">PROMO<span class="colored-my">.MY.ID</span></div>
+        </div>
+        <p>Katalog Eksklusif Pilihan Produk Terlaris Shopee</p>
+    </header>
+
+    <div class="container">
+
+        <div class="section-title">🔥 5 Produk Pilihan Terbaik di Shopee</div>
+
+        <div class="product-grid">
+
+            <!-- Produk 1 -->
+            <div class="card">
+                <div class="card-img-wrapper">
+                    <span class="badge-shopee">Shopee</span>
+                    <img src="1000484184.png" alt="Haerumi Dress">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="title">Haerumi Dress Sifon Silk Premium Grade A</div>
+                        <div class="price-row">
+                            <span class="price">Rp 125.000</span>
+                        </div>
+                    </div>
+                    <a href="https://s.shopee.co.id/2LZQ5YElc3" class="btn-shopee product-click-btn" target="_blank">Beli di Shopee</a>
+                </div>
+            </div>
+
+            <!-- Produk 2 -->
+            <div class="card">
+                <div class="card-img-wrapper">
+                    <span class="badge-shopee">Shopee</span>
+                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&auto=format&fit=crop&q=60" alt="Skincare">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="title">Skincare Brightening Glowing Set Original</div>
+                        <div class="price-row">
+                            <span class="price">Rp 98.000</span>
+                        </div>
+                    </div>
+                    <a href="https://shope.ee/SHOPEE_PRODUK_2" class="btn-shopee product-click-btn" target="_blank">Beli di Shopee</a>
+                </div>
+            </div>
+
+            <!-- Produk 3 -->
+            <div class="card">
+                <div class="card-img-wrapper">
+                    <span class="badge-shopee">Shopee</span>
+                    <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&auto=format&fit=crop&q=60" alt="Dress Casual">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="title">Dress Wanita Kekinian Casual Style Korea</div>
+                        <div class="price-row">
+                            <span class="price">Rp 99.000</span>
+                        </div>
+                    </div>
+                    <a href="https://shope.ee/SHOPEE_PRODUK_3" class="btn-shopee product-click-btn" target="_blank">Beli di Shopee</a>
+                </div>
+            </div>
+
+            <!-- Produk 4 -->
+            <div class="card">
+                <div class="card-img-wrapper">
+                    <span class="badge-shopee">Shopee</span>
+                    <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&auto=format&fit=crop&q=60" alt="Tas Selempang">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="title">Tas Selempang Wanita Kulit Sintetis Premium</div>
+                        <div class="price-row">
+                            <span class="price">Rp 75.000</span>
+                        </div>
+                    </div>
+                    <a href="https://shope.ee/SHOPEE_PRODUK_4" class="btn-shopee product-click-btn" target="_blank">Beli di Shopee</a>
+                </div>
+            </div>
+
+            <!-- Produk 5 -->
+            <div class="card">
+                <div class="card-img-wrapper">
+                    <span class="badge-shopee">Shopee</span>
+                    <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&auto=format&fit=crop&q=60" alt="Dekorasi Rumah">
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="title">Rak Dinding Minimalis Serbaguna Modern</div>
+                        <div class="price-row">
+                            <span class="price">Rp 55.000</span>
+                        </div>
+                    </div>
+                    <a href="https://shope.ee/SHOPEE_PRODUK_5" class="btn-shopee product-click-btn" target="_blank">Beli di Shopee</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Widget Statistik Kunjungan & Total Klik Produk di Bagian Bawah -->
+        <div class="visitor-box">
+            <div class="visitor-item">
+                Total Kunjungan
+                <strong id="total-visits">Memuat...</strong>
+            </div>
+            <div class="visitor-item">
+                Pengunjung Unik
+                <strong id="unique-visitors">Memuat...</strong>
+            </div>
+            <div class="visitor-item">
+                Total Klik Produk
+                <strong id="total-product-clicks">0</strong>
+            </div>
+        </div>
+
+        <!-- Kotak Lisensi / Disclaimer Afiliasi di Paling Bawah -->
+        <div class="affiliate-license-box">
+            <strong>ℹ️ Lisensi & Disclaimer Afiliasi:</strong><br>
+            Situs <strong>promo.my.id</strong> berfungsi sebagai media kurasi dan portal rekomendasi produk pilihan. Kami bukan pemilik, penjual (<em>seller</em>), ataupun produsen dari barang-barang yang ditampilkan. Seluruh transaksi, pengiriman, garansi, dan layanan pelanggan sepenuhnya ditangani oleh merchant resmi di platform terkait melalui tautan afiliasi yang terhubung.
+        </div>
+
+        <footer>
+            <p>&copy; 2026 promo.my.id • All Rights Reserved</p>
+        </footer>
+    </div>
+
+    <!-- Skrip JavaScript Statistik Kunjungan & Penghitung Klik Produk Otomatis -->
+    <script>
+        async function initTracking() {
+            try {
+                let response = await fetch('https://api.ipify.org?format=json');
+                let data = await response.json();
+                let userIP = data.ip;
+
+                let visitors = JSON.parse(localStorage.getItem('shopee_unique_visitors') || '[]');
+                let totalHits = parseInt(localStorage.getItem('shopee_total_hits') || '0');
+
+                totalHits += 1;
+                localStorage.setItem('shopee_total_hits', totalHits);
+
+                if (!visitors.includes(userIP)) {
+                    visitors.push(userIP);
+                    localStorage.setItem('shopee_unique_visitors', JSON.stringify(visitors));
+                }
+
+                document.getElementById('total-visits').innerText = totalHits.toLocaleString();
+                document.getElementById('unique-visitors').innerText = visitors.length.toLocaleString();
+
+            } catch (error) {
+                let totalHits = parseInt(localStorage.getItem('shopee_total_hits') || '142');
+                totalHits += 1;
+                localStorage.setItem('shopee_total_hits', totalHits);
+                document.getElementById('total-visits').innerText = totalHits.toLocaleString();
+                document.getElementById('unique-visitors').innerText = "1";
+            }
+
+            let totalClicks = parseInt(localStorage.getItem('shopee_total_product_clicks') || '0');
+            document.getElementById('total-product-clicks').innerText = totalClicks.toLocaleString();
+
+            const clickButtons = document.querySelectorAll('.product-click-btn');
+            clickButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    let currentClicks = parseInt(localStorage.getItem('shopee_total_product_clicks') || '0');
+                    currentClicks += 1;
+                    localStorage.setItem('shopee_total_product_clicks', currentClicks);
+                    document.getElementById('total-product-clicks').innerText = currentClicks.toLocaleString();
+                });
+            });
+        }
+
+        window.onload = initTracking;
+    </script>
+</body>
+</html>
