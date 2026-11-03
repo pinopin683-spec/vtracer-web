@@ -82,7 +82,7 @@
             <span>💡</span> <span id="text-bantuan">Buka Petunjuk (+20 Koin)</span>
         </button>
 
-        <!-- Tombol Link Afiliasi Harian (Hilang Otomatis Selama 24 Jam) -->
+        <!-- Tombol Link Afiliasi Harian -->
         <button id="btn-afiliasi" onclick="klaimAfiliasi()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 border border-emerald-500/40 text-white font-bold py-2.5 rounded-2xl text-xs transition shadow-lg flex items-center justify-center gap-2">
             <span>🔥</span> <span>Klaim Bonus Afiliasi Hari Ini (+100 Koin)</span>
         </button>
@@ -115,7 +115,6 @@
             document.getElementById('coin-text').innerText = `${koinHariIni} / 1000`;
             document.getElementById('level-text').innerText = `Tahap Misteri (${currentLevel}/1000)`;
             
-            // Perbarui tampilan status login email di atas
             let statusText = document.getElementById('user-status');
             let btnAuth = document.getElementById('btn-login-logout');
             if (userEmail) {
@@ -129,8 +128,8 @@
             }
         }
 
-        // Fungsi Login & Logout Email sederhana
-        function prosesLogin() {
+        // Fungsi Login Terhubung ke Server Ubuntu Termux
+        async function prosesLogin() {
             if (userEmail) {
                 if (confirm("Apakah kamu ingin keluar (logout) dari akun ini?")) {
                     localStorage.removeItem('user_email');
@@ -143,11 +142,34 @@
                 if (inputEmail && inputEmail.includes("@")) {
                     userEmail = inputEmail.trim();
                     localStorage.setItem('user_email', userEmail);
+                    
+                    // Sinkronisasi ke backend server Ubuntu
+                    await prosesLoginServer(userEmail);
+                    
                     updateUI();
-                    alert(`✅ Berhasil login dengan email: ${userEmail}`);
                 } else if (inputEmail) {
                     alert("⚠️ Format email tidak valid!");
                 }
+            }
+        }
+
+        // Fungsi Fetch API ke Server Backend Ubuntu
+        async function prosesLoginServer(emailInput) {
+            try {
+                let response = await fetch('http://192.168.8.100:8080/api.php?action=login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: emailInput })
+                });
+                let result = await response.json();
+                if (result.status === 'success') {
+                    console.log("Data player disinkronkan ke server:", result.data);
+                    koinHariIni = result.data.coins;
+                    currentLevel = result.data.current_level;
+                    updateUI();
+                }
+            } catch (error) {
+                console.error("Gagal terhubung ke server backend:", error);
             }
         }
 
@@ -220,12 +242,11 @@
             }
         }
 
-        // Timer Otomatis Setiap 3 Menit untuk Memunculkan Iklan AdMob di Background
         setInterval(() => {
             if (window.AndroidInterface && typeof window.AndroidInterface.showInterstitialAd === 'function') {
                 window.AndroidInterface.showInterstitialAd();
             } else {
-                console.log("Simulasi Timer 3 Menit: Iklan Interstitial AdMob dipicu otomatis di background.");
+                console.log("Simulasi Timer 3 Menit: Iklan Interstitial dipicu otomatis.");
             }
         }, 180000);
 
@@ -261,7 +282,7 @@
             }
 
             localStorage.setItem('last_affiliate_claim', waktuSekarang);
-            alert("✅ Selamat! Kamu mendapatkan bonus +100 Koin. Tombol afiliasi akan muncul kembali besok.");
+            alert("✅ Selamat! Kamu mendapatkan bonus +100 Koin.");
             
             updateUI();
             cekStatusAfiliasiHarian();
@@ -322,21 +343,19 @@
             }
         }
 
-        // Fungsi Penarikan Saldo DANA & Penyimpanan Riwayat (History WD)
         function tarikSaldoDana() {
             if (!userEmail) {
-                alert("⚠️ Silakan Login dengan Email kamu terlebih dahulu di bagian atas sebelum melakukan penarikan!");
+                alert("⚠️ Silakan Login dengan Email kamu terlebih dahulu!");
                 return;
             }
 
             if (koinHariIni < 1000) {
-                alert("⚠️ Koin belum cukup! Minimal 1.000 koin untuk melakukan penarikan ke DANA.");
+                alert("⚠️ Koin belum cukup! Minimal 1.000 koin untuk penarikan ke DANA.");
             } else {
                 let nomorDana = prompt("Masukkan nomor akun DANA kamu (contoh: 08123456789):");
                 if (nomorDana) {
                     let tanggalWd = new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
                     
-                    // Simpan data riwayat ke localStorage
                     let riwayatList = JSON.parse(localStorage.getItem('wd_history')) || [];
                     riwayatList.unshift({
                         email: userEmail,
@@ -347,7 +366,7 @@
                     });
                     localStorage.setItem('wd_history', JSON.stringify(riwayatList));
 
-                    alert(`✅ Permintaan penarikan Rp1.000 ke nomor DANA (${nomorDana}) berhasil dikirim!`);
+                    alert(`✅ Permintaan penarikan ke DANA (${nomorDana}) berhasil dikirim!`);
                     koinHariIni -= 1000;
                     localStorage.setItem('daily_coins', koinHariIni);
                     updateUI();
@@ -355,7 +374,6 @@
             }
         }
 
-        // Fungsi Menampilkan Riwayat Penarikan Dana
         function lihatRiwayatWD() {
             let riwayatList = JSON.parse(localStorage.getItem('wd_history')) || [];
             if (riwayatList.length === 0) {
@@ -368,27 +386,6 @@
                 alert(pesan);
             }
         }
-
-// Contoh integrasi Fetch API Login ke Server Ubuntu
-async function prosesLoginServer(emailInput) {
-    try {
-        let response = await fetch('http://192.168.8.100/api.php?action=login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailInput })
-        });
-        let result = await response.json();
-        if (result.status === 'success') {
-            console.log("Data player disinkronkan:", result.data);
-            // Update koin dan level dari database server
-            koinHariIni = result.data.coins;
-            currentLevel = result.data.current_level;
-            updateUI();
-        }
-    } catch (error) {
-        console.error("Gagal terhubung ke server backend:", error);
-    }
-}
 
         window.onload = loadLevel;
     </script>
