@@ -372,7 +372,7 @@
 // Contoh integrasi Fetch API Login ke Server Ubuntu
 async function prosesLoginServer(emailInput) {
     try {
-        let response = await fetch('http://alamat_server_kamu/api.php?action=login', {
+        let response = await fetch('http://192.168.8.100/api.php?action=login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: emailInput })
