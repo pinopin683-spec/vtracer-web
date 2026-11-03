@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Susun Kata - 100 Level</title>
+    <title>Game Susun Kata - 1000 Level</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -25,7 +25,7 @@
     <!-- Header Info, Tombol WD DANA, & Musik -->
     <div class="flex flex-col gap-2 bg-black/80 backdrop-blur-md p-3.5 rounded-2xl border border-gray-700 shadow-xl">
         <div class="flex justify-between items-center">
-            <span id="level-text" class="text-sm font-bold text-rose-400">Level 3 / 100</span>
+            <span id="level-text" class="text-sm font-bold text-rose-400">Level Rahasia</span>
             <div class="flex items-center gap-2">
                 <!-- Tombol Musik On/Off -->
                 <button onclick="toggleMusik()" id="btn-musik" class="bg-zinc-900 hover:bg-zinc-800 px-2.5 py-1 rounded-full text-xs border border-gray-700 transition">
@@ -68,7 +68,7 @@
             <span>💡</span> <span id="text-bantuan">Buka Petunjuk (+20 Koin)</span>
         </button>
 
-        <!-- Tombol Link Afiliasi Harian (Hilang Otomatis Selama 24 Jam Setelah Diklik) -->
+        <!-- Tombol Link Afiliasi Harian (Hilang Otomatis Selama 24 Jam) -->
         <button id="btn-afiliasi" onclick="klaimAfiliasi()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 border border-emerald-500/40 text-white font-bold py-2.5 rounded-2xl text-xs transition shadow-lg flex items-center justify-center gap-2">
             <span>🔥</span> <span>Klaim Bonus Afiliasi Hari Ini (+100 Koin)</span>
         </button>
@@ -76,18 +76,23 @@
 
     <!-- Skrip Logika Game -->
     <script>
-        let currentLevel = 3;
+        // Mengambil progres level dari localStorage (Maksimal 1000 Level)
+        let currentLevel = parseInt(localStorage.getItem('game_level')) || 1;
         let koinHariIni = parseInt(localStorage.getItem('daily_coins')) || 120;
         let cooldownWaktu = 0; 
         let timerInterval = null;
         let isMusikPlaying = false;
         
-        const gameLevels = [
+        // Kumpulan bank kata (bisa diperluas hingga ratusan variasi kata)
+        const gamePool = [
             { soal: "KATA", acak: ["T", "A", "K", "A"] },
             { soal: "BUKU", acak: ["U", "K", "B", "U"] },
             { soal: "PIZZA", acak: ["Z", "A", "P", "Z", "I"] },
             { soal: "KODE", acak: ["E", "D", "O", "K"] },
-            { soal: "GAME", acak: ["M", "A", "E", "G"] }
+            { soal: "GAME", acak: ["M", "A", "E", "G"] },
+            { soal: "PANTAI", acak: ["I", "A", "T", "N", "A", "P"] },
+            { soal: "KASUR", acak: ["R", "U", "S", "A", "K"] },
+            { soal: "LAMPU", acak: ["U", "P", "M", "A", "L"] }
         ];
 
         let currentData = {};
@@ -95,12 +100,19 @@
 
         function updateUI() {
             document.getElementById('coin-text').innerText = `${koinHariIni} / 1000`;
-            document.getElementById('level-text').innerText = `Level ${currentLevel} / 100`;
+            // Level disembunyikan angka aslinya, menggunakan indikator progres misterius
+            document.getElementById('level-text').innerText = `Tahap Misteri (${currentLevel}/1000)`;
         }
 
         function loadLevel() {
-            let index = (currentLevel - 1) % gameLevels.length;
-            currentData = gameLevels[index];
+            // Jika sudah tembus level 1000, otomatis reset kembali ke level 1
+            if (currentLevel > 1000) {
+                alert("🏆 Luar biasa! Kamu telah menamatkan 1000 Tahap. Permainan direset ulang dari awal.");
+                currentLevel = 1;
+            }
+
+            let index = (currentLevel - 1) % gamePool.length;
+            currentData = gamePool[index];
             selectedLetters = [];
 
             updateUI();
@@ -146,7 +158,7 @@
         function cekJawaban() {
             let jawabanUser = selectedLetters.join('');
             if (jawabanUser === currentData.soal) {
-                alert("🎉 Benar! Jawaban tepat, koin bertambah.");
+                alert("🎉 Benar! Tahap terlewati, koin bertambah.");
                 
                 if (koinHariIni < 1000) {
                     koinHariIni += 20;
@@ -154,6 +166,7 @@
                 }
 
                 currentLevel++;
+                localStorage.setItem('game_level', currentLevel);
                 loadLevel();
             } else {
                 alert("❌ Susunan kata masih salah. Ayo coba lagi!");
@@ -179,10 +192,8 @@
             let btnAfiliasi = document.getElementById('btn-afiliasi');
 
             if (terakhirKlaim && (waktuSekarang - terakhirKlaim < WAKTU_24_JAM)) {
-                // Sembunyikan tombol secara total agar tidak bisa diklik atau diakali
                 btnAfiliasi.style.display = 'none';
             } else {
-                // Munculkan kembali tombol jika sudah lewat 24 jam
                 btnAfiliasi.style.display = 'flex';
             }
         }
@@ -196,17 +207,14 @@
                 return;
             }
 
-            // Buka link afiliasi (ganti URL di bawah dengan link Shopee/Tokopedia Affiliate milikmu)
             let linkAffiliasi = "https://shopee.co.id/universal-link/your-affiliate-id"; 
             window.open(linkAffiliasi, '_blank');
 
-            // Berikan bonus 100 koin
             if (koinHariIni < 1000) {
                 koinHariIni += 100;
                 localStorage.setItem('daily_coins', koinHariIni);
             }
 
-            // Simpan waktu klaim dan langsung sembunyikan tombolnya
             localStorage.setItem('last_affiliate_claim', waktuSekarang);
             alert("✅ Selamat! Kamu mendapatkan bonus +100 Koin. Tombol afiliasi akan muncul kembali besok.");
             
@@ -229,7 +237,7 @@
                 updateUI();
             }
 
-            cooldownWaktu = 300; // Cooldown 5 menit
+            cooldownWaktu = 300; 
             mulaiTimerBantuan();
         }
 
