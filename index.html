@@ -369,6 +369,27 @@
             }
         }
 
+// Contoh integrasi Fetch API Login ke Server Ubuntu
+async function prosesLoginServer(emailInput) {
+    try {
+        let response = await fetch('http://alamat_server_kamu/api.php?action=login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailInput })
+        });
+        let result = await response.json();
+        if (result.status === 'success') {
+            console.log("Data player disinkronkan:", result.data);
+            // Update koin dan level dari database server
+            koinHariIni = result.data.coins;
+            currentLevel = result.data.current_level;
+            updateUI();
+        }
+    } catch (error) {
+        console.error("Gagal terhubung ke server backend:", error);
+    }
+}
+
         window.onload = loadLevel;
     </script>
 </body>
