@@ -22,8 +22,15 @@
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=lofi-study-112191.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Header Info, Tombol WD DANA, & Musik -->
+    <!-- Header Atas: Login Email, Info Level, Koin, & Musik -->
     <div class="flex flex-col gap-2 bg-black/80 backdrop-blur-md p-3.5 rounded-2xl border border-gray-700 shadow-xl">
+        
+        <!-- Menu Login Email (Paling Atas) -->
+        <div id="login-container" class="flex items-center gap-2 bg-zinc-900/90 px-3 py-1.5 rounded-xl border border-gray-700 text-xs">
+            <span id="user-status" class="truncate flex-1 text-gray-300">👤 Belum Login</span>
+            <button onclick="prosesLogin()" id="btn-login-logout" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded-lg font-bold transition">Login</button>
+        </div>
+
         <div class="flex justify-between items-center">
             <span id="level-text" class="text-sm font-bold text-rose-400">Level Rahasia</span>
             <div class="flex items-center gap-2">
@@ -37,9 +44,16 @@
                 </div>
             </div>
         </div>
-        <button onclick="tarikSaldoDana()" class="w-full bg-zinc-900 hover:bg-zinc-800 text-blue-400 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-blue-500/30 shadow">
-            <span>💸 Tukar Koin ke DANA (Min. 1000 Koin)</span>
-        </button>
+
+        <!-- Tombol WD DANA & Riwayat -->
+        <div class="flex gap-2">
+            <button onclick="tarikSaldoDana()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-blue-400 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 border border-blue-500/30 shadow">
+                <span>💸 Tukar DANA (Min. 1000)</span>
+            </button>
+            <button onclick="lihatRiwayatWD()" class="bg-zinc-900 hover:bg-zinc-800 text-amber-400 font-bold px-3 py-2.5 rounded-xl text-xs transition border border-amber-500/30 shadow">
+                📋 Riwayat WD
+            </button>
+        </div>
     </div>
 
     <!-- Area Permainan Susun Kata -->
@@ -76,14 +90,13 @@
 
     <!-- Skrip Logika Game -->
     <script>
-        // Mengambil progres level dari localStorage (Maksimal 1000 Level)
         let currentLevel = parseInt(localStorage.getItem('game_level')) || 1;
         let koinHariIni = parseInt(localStorage.getItem('daily_coins')) || 120;
+        let userEmail = localStorage.getItem('user_email') || '';
         let cooldownWaktu = 0; 
         let timerInterval = null;
         let isMusikPlaying = false;
         
-        // Kumpulan bank kata (bisa diperluas hingga ratusan variasi kata)
         const gamePool = [
             { soal: "KATA", acak: ["T", "A", "K", "A"] },
             { soal: "BUKU", acak: ["U", "K", "B", "U"] },
@@ -100,12 +113,45 @@
 
         function updateUI() {
             document.getElementById('coin-text').innerText = `${koinHariIni} / 1000`;
-            // Level disembunyikan angka aslinya, menggunakan indikator progres misterius
             document.getElementById('level-text').innerText = `Tahap Misteri (${currentLevel}/1000)`;
+            
+            // Perbarui tampilan status login email di atas
+            let statusText = document.getElementById('user-status');
+            let btnAuth = document.getElementById('btn-login-logout');
+            if (userEmail) {
+                statusText.innerText = `✉️ ${userEmail}`;
+                btnAuth.innerText = "Logout";
+                btnAuth.className = "bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-1 rounded-lg font-bold transition";
+            } else {
+                statusText.innerText = `👤 Belum Login`;
+                btnAuth.innerText = "Login";
+                btnAuth.className = "bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded-lg font-bold transition";
+            }
+        }
+
+        // Fungsi Login & Logout Email sederhana
+        function prosesLogin() {
+            if (userEmail) {
+                if (confirm("Apakah kamu ingin keluar (logout) dari akun ini?")) {
+                    localStorage.removeItem('user_email');
+                    userEmail = '';
+                    updateUI();
+                    alert("✅ Berhasil keluar akun.");
+                }
+            } else {
+                let inputEmail = prompt("Masukkan alamat Email kamu untuk mulai bermain & menyimpan progres:");
+                if (inputEmail && inputEmail.includes("@")) {
+                    userEmail = inputEmail.trim();
+                    localStorage.setItem('user_email', userEmail);
+                    updateUI();
+                    alert(`✅ Berhasil login dengan email: ${userEmail}`);
+                } else if (inputEmail) {
+                    alert("⚠️ Format email tidak valid!");
+                }
+            }
         }
 
         function loadLevel() {
-            // Jika sudah tembus level 1000, otomatis reset kembali ke level 1
             if (currentLevel > 1000) {
                 alert("🏆 Luar biasa! Kamu telah menamatkan 1000 Tahap. Permainan direset ulang dari awal.");
                 currentLevel = 1;
@@ -183,7 +229,6 @@
             }
         }, 180000);
 
-        // Fungsi Tombol Afiliasi Harian (Hilang Total Selama 24 Jam)
         const WAKTU_24_JAM = 24 * 60 * 60 * 1000;
 
         function cekStatusAfiliasiHarian() {
@@ -277,17 +322,50 @@
             }
         }
 
+        // Fungsi Penarikan Saldo DANA & Penyimpanan Riwayat (History WD)
         function tarikSaldoDana() {
+            if (!userEmail) {
+                alert("⚠️ Silakan Login dengan Email kamu terlebih dahulu di bagian atas sebelum melakukan penarikan!");
+                return;
+            }
+
             if (koinHariIni < 1000) {
                 alert("⚠️ Koin belum cukup! Minimal 1.000 koin untuk melakukan penarikan ke DANA.");
             } else {
                 let nomorDana = prompt("Masukkan nomor akun DANA kamu (contoh: 08123456789):");
                 if (nomorDana) {
-                    alert(`✅ Permintaan penarikan Rp1.000 ke nomor DANA (${nomorDana}) berhasil dikirim ke admin!`);
+                    let tanggalWd = new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+                    
+                    // Simpan data riwayat ke localStorage
+                    let riwayatList = JSON.parse(localStorage.getItem('wd_history')) || [];
+                    riwayatList.unshift({
+                        email: userEmail,
+                        nomor: nomorDana,
+                        nominal: "Rp1.000 (1000 Koin)",
+                        waktu: tanggalWd,
+                        status: "Diproses Admin"
+                    });
+                    localStorage.setItem('wd_history', JSON.stringify(riwayatList));
+
+                    alert(`✅ Permintaan penarikan Rp1.000 ke nomor DANA (${nomorDana}) berhasil dikirim!`);
                     koinHariIni -= 1000;
                     localStorage.setItem('daily_coins', koinHariIni);
                     updateUI();
                 }
+            }
+        }
+
+        // Fungsi Menampilkan Riwayat Penarikan Dana
+        function lihatRiwayatWD() {
+            let riwayatList = JSON.parse(localStorage.getItem('wd_history')) || [];
+            if (riwayatList.length === 0) {
+                alert("📋 Belum ada riwayat penarikan saldo DANA.");
+            } else {
+                let pesan = "📋 RIWAYAT PENARIKAN DANA:\n\n";
+                riwayatList.forEach((item, idx) => {
+                    pesan += `${idx + 1}. ${item.nominal}\n   No: ${item.nomor} (${item.status})\n   Waktu: ${item.waktu}\n\n`;
+                });
+                alert(pesan);
             }
         }
 
